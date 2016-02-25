@@ -1,33 +1,31 @@
 package doodle.core
 
 /**
-  * Created by Phil on 23/02/2016.
+  * Bounding box with x and y as it's centre coords and width and height of the entire
+  * box i.e. the edges are half the height and width away from the centre
   */
-//case class BoundingBox(x: Int, y: Int, w: Int, h: Int) {
-//
-//  def getCenter(): (Int, Int) = {
-//    (x + (w/2), y + (h/2))
-//  }
-//
-//  def createNewBoxOn(newWidth: Int, newHeight: Int): BoundingBox = {
-//    BoundingBox(getCenter()._1 - (newWidth/2), getCenter()._2 - (newHeight/2), newWidth, newHeight)
-//  }
-//
-//  def createNewBoxBeside(newWidth: Int, newHeight: Int): BoundingBox = {
-//    BoundingBox(w, getCenter()._2 - (newHeight/2), newWidth, newHeight)
-//  }
-//
-//  def createNewBoxAbove(newWidth: Int, newHeight: Int): BoundingBox = {
-//    BoundingBox(getCenter()._1 - (newWidth/2), y - (newHeight), newWidth, newHeight)
-//  }
-//
-//}
-case class BoundingBox(left: Int, top: Int, right: Int, bottom: Int) {
+case class BoundingBox(originX: Double, originY: Double, w: Double, h: Double) {
 
-  def getCenter(): (Int, Int) = {
-
+  def getCentre: (Double, Double) = {
+    (originX, originY)
   }
 
+  /**
+    * Returns the Bounding box of both bounding boxes
+    * @return
+    */
+  def on(that: BoundingBox): BoundingBox = {
+    BoundingBox(originX, originY, this.w max that.w, this.h max that.h)
+  }
 
+  def beside(that: BoundingBox): BoundingBox = {
+    BoundingBox(((this.originX max that.originX - this.originX min that.originX)/2) + (this.originX min that.originX),
+      originY, this.w + that.w, this.h max that.h)
+  }
+
+  def above(that: BoundingBox): BoundingBox = {
+    BoundingBox(originX, ((this.originY max that.originY - this.originY min that.originY)/2) + (this.originY min that.originY),
+      this.w + that.w, this.h max that.h)
+  }
 
 }
