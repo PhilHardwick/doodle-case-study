@@ -15,6 +15,9 @@ lazy val doodle = crossProject.
       |import doodle.core._
       |import doodle.syntax._
       |import doodle.jvm.Java2DCanvas
+      |val canvas = Java2DCanvas.canvas
+      |val circle = Circle(50.0)
+      |val rectangle = Rectangle(100.0, 100.0)
     """.trim.stripMargin,
     cleanupCommands in console := """
       |doodle.jvm.quit()
