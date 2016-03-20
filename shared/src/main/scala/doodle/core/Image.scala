@@ -1,8 +1,12 @@
 package doodle.core
 
-import doodle.backend.Canvas
+import doodle.backend._
 
 sealed trait Image {
+  def at(currentLocation: Vec): Image = {
+    At(currentLocation, this)
+  }
+
 
   def boundingBox(): BoundingBox = this match {
     case Circle(r) => BoundingBox(-r, r, r, -r);
@@ -10,6 +14,7 @@ sealed trait Image {
     case On(a, b) => a.boundingBox() on b.boundingBox()
     case Beside(a, b) => a.boundingBox() beside b.boundingBox()
     case Above(a, b) => a.boundingBox() above b.boundingBox()
+    case At(location, image) => image.boundingBox().move(location)
   }
 
   def on(that: Image): Image =
@@ -50,7 +55,24 @@ sealed trait Image {
       val bOriginY = originY + thisBox.bottom + (bBox.height / 2)
       a.draw(canvas, originX, aOriginY)
       b.draw(canvas, originX, bOriginY)
+    case At(location, image) =>
+      image.draw(canvas, location.x, location.y)
   }
+
+  def currentVelocity(previousVelocity: Vec, input: Key): Vec =
+    input match {
+      case Up => previousVelocity + Vec(0, 1)
+      case Down => previousVelocity + Vec(0, -1)
+      case Left => previousVelocity + Vec(-1, 0)
+      case Right => previousVelocity + Vec(1, 0)
+    }
+
+  def currentLocation(previousLocation: Vec, velocity: Vec): Vec =
+    previousLocation + velocity
+
+
+  def currentBall(currentLocation: Vec): Image =
+    this at currentLocation
 
 }
 
@@ -63,3 +85,5 @@ final case class On(a: Image, b: Image) extends Image
 final case class Beside(a: Image, b: Image) extends Image
 
 final case class Above(a: Image, b: Image) extends Image
+
+final case class At(currentLocation: Vec, i: Image) extends Image

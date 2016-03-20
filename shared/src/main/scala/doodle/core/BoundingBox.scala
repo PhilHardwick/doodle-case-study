@@ -34,6 +34,15 @@ package doodle
 package core
 
 final case class BoundingBox(left: Double, top: Double, right: Double, bottom: Double) {
+  def move(transformation: Vec): BoundingBox = {
+    BoundingBox(
+      this.left + transformation.x,
+      this.top + transformation.y,
+      this.right + transformation.x,
+      this.bottom + transformation.y
+    )
+  }
+
   val height: Double = top - bottom
   val width: Double = right - left
 
